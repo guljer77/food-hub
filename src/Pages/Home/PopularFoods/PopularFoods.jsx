@@ -3,7 +3,7 @@ import SectionTitle from "../../../Components/SectionTitle";
 import Container from "../../../Components/Container";
 import Card from "../../../Components/Food/Card";
 
-function PopularFoods() {
+function PopularFoods({handleClick, result}) {
   return (
     <div className="bg-bg-primary py-10">
       <Container>
@@ -14,33 +14,26 @@ function PopularFoods() {
           />
           <div className="">
             <ul className="flex flex-wrap items-center space-x-3">
-              <li className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
+              <button onClick={handleClick} value="" className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
                 All Menu
-              </li>
-              <li className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
+              </button>
+              <button onClick={handleClick} value="Burger" className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
                 Burger
-              </li>
-              <li className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
+              </button>
+              <button onClick={handleClick} value="Chicken" className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
                 Chicken
-              </li>
-              <li className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
+              </button>
+              <button onClick={handleClick} value="Pizza" className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
                 Pizza
-              </li>
-              <li className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
+              </button>
+              <button onClick={handleClick} value="Dessert" className="px-3 py-2 bg-primary text-white cursor-pointer rounded-md lg:mb-0 mb-3">
                 Dessert
-              </li>
+              </button>
             </ul>
           </div>
         </div>
         <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          {result}
         </div>
       </Container>
     </div>

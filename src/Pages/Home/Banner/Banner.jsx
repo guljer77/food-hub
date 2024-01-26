@@ -2,7 +2,7 @@ import React from "react";
 import "./banner.css";
 import Container from "../../../Components/Container";
 
-function Banner() {
+function Banner({search, searchResult, foodItem}) {
   return (
     <div className="bg-banner py-20">
       <Container>
@@ -25,6 +25,8 @@ function Banner() {
                 <div className="lg:w-3/4 w-full bg-white p-3 rounded-full">
                   <input
                     type="text"
+                    value={search}
+                    onChange={searchResult}
                     placeholder="Search What You Want|"
                     className="py-2 px-2 w-full rounded-full border"
                   />
