@@ -5,7 +5,7 @@ import { IoMdHome } from "react-icons/io";
 import { FaWallet, FaAddressBook, FaUsers } from "react-icons/fa";
 import { TfiMenuAlt } from "react-icons/tfi";
 
-function Sidebar({signOutHandle}) {
+function Sidebar({ signOutHandle }) {
   return (
     <div>
       <div className="pl-10 py-10">
@@ -31,21 +31,21 @@ function Sidebar({signOutHandle}) {
           </li>
           <li className="py-3 border-b border-gray-200 pl-10 text-[16px] uppercase">
             <NavLink
-              to="/dashboard/add-item"
-              className={({ isActive }) => (isActive ? "text-primary" : "")}
-            >
-              <span className="flex items-center gap-2">
-                <MdOutlineRestaurantMenu /> Add Items
-              </span>
-            </NavLink>
-          </li>
-          <li className="py-3 border-b border-gray-200 pl-10 text-[16px] uppercase">
-            <NavLink
               to="/dashboard/manage"
               className={({ isActive }) => (isActive ? "text-primary" : "")}
             >
               <span className="flex items-center gap-2">
                 <TfiMenuAlt /> Manage Item
+              </span>
+            </NavLink>
+          </li>
+          <li className="py-3 border-b border-gray-200 pl-10 text-[16px] uppercase">
+            <NavLink
+              to="/dashboard/add-item"
+              className={({ isActive }) => (isActive ? "text-primary" : "")}
+            >
+              <span className="flex items-center gap-2">
+                <MdOutlineRestaurantMenu /> Add Items
               </span>
             </NavLink>
           </li>
@@ -79,10 +79,11 @@ function Sidebar({signOutHandle}) {
               </span>
             </NavLink>
           </li>
-          <li onClick={signOutHandle} className="py-3 border-b border-gray-200 pl-10 text-[16px] text-secondary uppercase">
-            <NavLink
-              className=""
-            >
+          <li
+            onClick={signOutHandle}
+            className="py-3 border-b border-gray-200 pl-10 text-[16px] text-secondary uppercase"
+          >
+            <NavLink className="">
               <span className="flex items-center gap-2">
                 <MdLogout /> Logout
               </span>

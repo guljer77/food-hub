@@ -16,6 +16,9 @@ import DashboardLayouts from "../Layouts/DashboardLayouts";
 import AdminHome from "../Dashboard/AdminHome/AdminHome";
 import User from "../Dashboard/User/User";
 import AdminRoute from "./AdminRoute";
+import AddFood from "../Dashboard/Food/AddFood/AddFood";
+import ManageFood from "../Dashboard/Food/ManageFood/ManageFood";
+import EditFood from "../Dashboard/Food/EditFood/EditFood";
 
 export const router = createBrowserRouter([
   {
@@ -76,6 +79,18 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <AdminHome />
+      },
+      {
+        path: '/dashboard/add-item',
+        element: <AddFood />
+      },
+      {
+        path:'/dashboard/manage',
+        element: <ManageFood />
+      },
+      {
+        path:'/dashboard/manage/:id',
+        element: <EditFood />
       },
       {
         path: '/dashboard/users',
