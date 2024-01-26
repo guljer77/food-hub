@@ -30,7 +30,7 @@ function DashboardLayouts() {
             <div>
               {user ? (
                 <>
-                  <h4 className="text-[22px] font-semibold uppercase text-secondary">{user?.displayName}</h4>
+                  <h4 className="text-[22px] font-semibold uppercase text-secondary">Admin</h4>
                 </>
               ) : (
                 ""
@@ -51,8 +51,8 @@ function DashboardLayouts() {
         </div>
       </div>
       {openSidebar && (
-        <div className="w-[320px] h-screen fixed top-0 left-0">
-          <div className="fixed top-0 left-0 bg-white border-r w-[320px] h-screen">
+        <div className="w-[300px] h-screen fixed top-0 left-0">
+          <div className="fixed top-0 left-0 bg-white border-r w-[300px] h-screen">
             <Sidebar />
           </div>
         </div>
