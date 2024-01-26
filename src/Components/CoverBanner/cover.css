@@ -1,0 +1,21 @@
+.cover-img{
+  background-image: url('../../assets/counter_bg.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  width: 100%;
+  height: 70vh;
+  position: relative;
+  z-index: 40;
+}
+.cover-img::after{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70vh;
+  background-color: black;
+  opacity: 0.75;
+  z-index: -40;
+}

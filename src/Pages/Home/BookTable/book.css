@@ -1,0 +1,8 @@
+.bg-table{
+  background-image: url('../../../assets/reservation_bg.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  border-radius: 8px;
+}
