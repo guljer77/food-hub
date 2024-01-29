@@ -6,7 +6,7 @@ import useAxiosSecure from "../../Hooks/useAxiosSecure";
 import { useAuth } from "../../Hooks/useAuth";
 
 function User() {
-  const {loading} = useAuth();
+  const {user,loading} = useAuth();
   //fetch-api
   const [axiosSecure] = useAxiosSecure();
   const { data: users = [], refetch } = useQuery({
@@ -19,12 +19,9 @@ function User() {
   });
   //make an admin
   const makeAdmin = user => {
-    fetch(`http://localhost:5000/users/admin/${user?._id}`, {
-      method: "PATCH",
-    })
-      .then(res => res.json())
+    axiosSecure.patch(`http://localhost:5000/users/admin/${user?._id}`)
       .then(data => {
-        if (data.modifiedCount > 0) {
+        if (data.data.modifiedCount > 0) {
           refetch()
           Swal.fire({
             position: "top-end",
@@ -48,12 +45,9 @@ function User() {
       confirmButtonText: "Yes, delete it!",
     }).then(result => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:5000/users/admin/${id}`, {
-          method: "DELETE",
-        })
-          .then(res => res.json())
+        axiosSecure.delete(`http://localhost:5000/users/admin/${id}`)
           .then(data => {
-            if (data.deletedCount > 0) {
+            if (data.data.deletedCount > 0) {
               refetch();
               Swal.fire({
                 title: "Deleted!",

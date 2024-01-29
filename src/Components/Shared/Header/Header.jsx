@@ -101,17 +101,21 @@ function Header() {
               <div className="lg:block hidden">
                 <Link to="/cart" className="flex items-center gap-[2px]">
                   <IoMdCart className="text-[24px]" />
-                  <span className="relative -top-5 text-primary">{cart?.length}</span>
+                  <span className="relative -top-5 text-primary">
+                    {cart?.length}
+                  </span>
                 </Link>
               </div>
               <div className="lg:block hidden">
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <img
-                      src={user?.photoURL}
-                      alt=""
-                      className="w-[50px] h-[50px] rounded-full"
-                    />
+                    <Link to="/profile">
+                      <img
+                        src={user?.photoURL}
+                        alt=""
+                        className="w-[50px] h-[50px] rounded-full"
+                      />
+                    </Link>
                     <ul>
                       <li
                         onClick={logOut}
@@ -128,11 +132,9 @@ function Header() {
                     </ul>
                   </div>
                 ) : (
-                  <img
-                    src={Man}
-                    alt=""
-                    className="w-[50px] h-[50px] rounded-full"
-                  />
+                  <Link to="/login" className="text-[17px] font-medium">
+                    Login
+                  </Link>
                 )}
               </div>
               <div className="lg:hidden block" onClick={() => setShow(!show)}>

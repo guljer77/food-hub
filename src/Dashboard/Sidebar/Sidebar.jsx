@@ -51,7 +51,7 @@ function Sidebar({ signOutHandle }) {
           </li>
           <li className="py-3 border-b border-gray-200 pl-10 text-[16px] uppercase">
             <NavLink
-              to="/dashboard/booking"
+              to="/dashboard/bookings"
               className={({ isActive }) => (isActive ? "text-primary" : "")}
             >
               <span className="flex items-center gap-2">

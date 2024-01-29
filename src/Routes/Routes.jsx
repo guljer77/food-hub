@@ -22,6 +22,10 @@ import EditFood from "../Dashboard/Food/EditFood/EditFood";
 import Cart from "../Pages/CartPage/Cart";
 import PrivateRoute from "./PrivateRoute";
 import Payments from "../Pages/Payments/Payments";
+import UserHome from "../Pages/Profile/UserHome/UserHome";
+import Bookings from "../Pages/Profile/Bookings/Bookings";
+import UserOrder from "../Pages/Profile/Order/UserOrder";
+import AdminBookings from "../Dashboard/AdminBookings/AdminBookings";
 
 export const router = createBrowserRouter([
   {
@@ -71,7 +75,21 @@ export const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <PrivateRoute><Profile /></PrivateRoute>
+        element: <PrivateRoute><Profile /></PrivateRoute>,
+        children: [
+          {
+            path: '/profile',
+            element: <UserHome />,
+          },
+          {
+            path: '/profile/order',
+            element: <UserOrder />
+          },
+          {
+            path: '/profile/bookings',
+            element: <Bookings />
+          }
+        ]
       }
     ]
   },
@@ -102,6 +120,10 @@ export const router = createBrowserRouter([
       {
         path:'/dashboard/manage/:id',
         element: <EditFood />
+      },
+      {
+        path:'/dashboard/bookings',
+        element: <AdminBookings />
       },
       {
         path: '/dashboard/users',

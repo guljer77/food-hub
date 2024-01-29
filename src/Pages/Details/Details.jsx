@@ -13,6 +13,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import { useCartData } from "../../Hooks/useCart";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 function Details() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function Details() {
   const { user } = useAuth();
   const [foods] = useMenu();
   const { id } = useParams();
+  const [axiosSecure] = useAxiosSecure();
   const finalItem = foods.find(item => item?._id === id);
   const categoryItem = foods.filter(
     item => item?.category === finalItem?.category
@@ -51,16 +53,9 @@ function Details() {
         quantity: increMent,
         price: increMent * finalItem?.offerPrice,
       };
-      fetch(`http://localhost:5000/userFoods`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(orderItem),
-      })
-        .then(res => res.json())
+      axiosSecure.post(`/userFoods`,orderItem)
         .then(data => {
-          if (data.insertedId) {
+          if (data.data.insertedId) {
             refetch();
             Swal.fire({
               position: "top-end",

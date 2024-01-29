@@ -39,7 +39,7 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center w-full h-screen bg-bg-primary">
-      <div className="bg-white w-[35%] h-auto mx-auto py-10 rounded">
+      <div className="bg-white lg:w-[35%] w-full h-auto mx-auto py-10 lg:px-0 px-5 rounded">
         <h4 className="text-center text-[32px] font-bold text-secondary">
           Welcome Back
         </h4>
