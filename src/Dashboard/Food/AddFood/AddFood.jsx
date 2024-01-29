@@ -2,9 +2,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 function AddFood() {
   const navigate = useNavigate();
+  const [axiosSecure] = useAxiosSecure();
   const { register, formState: { errors }, handleSubmit } = useForm();
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -22,16 +24,9 @@ function AddFood() {
         const imgUrl = dataImg.data.display_url;
         const {name,category,regularPrice,offerPrice,description} = data;
         const newItem = {name,category,regularPrice,offerPrice,description, image:imgUrl}
-        fetch(`http://localhost:5000/foods/admin`,{
-          method: "POST",
-          headers: {
-            'content-type':'application/json'
-          },
-          body: JSON.stringify(newItem)
-        })
-        .then(res=> res.json())
+        axiosSecure.post(`/foods/admin`, newItem)
         .then(data=>{
-          if(data.insertedId){
+          if(data.data.insertedId){
             Swal.fire({
               position: "top-end",
               icon: "success",

@@ -7,15 +7,86 @@ import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import Card from "../../Components/Food/Card";
-import Image from "../../assets/menu2_img_6.jpg";
 import Review from "../../assets/client_1.png";
+import { useMenu } from "../../Hooks/useMenu";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../Hooks/useAuth";
+import Swal from "sweetalert2";
+import { useCartData } from "../../Hooks/useCart";
 
 function Details() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [,refetch] = useCartData();
+  const { user } = useAuth();
+  const [foods] = useMenu();
+  const { id } = useParams();
+  const finalItem = foods.find(item => item?._id === id);
+  const categoryItem = foods.filter(
+    item => item?.category === finalItem?.category
+  );
   const [show, setShow] = useState(1);
   const toggleClick = id => {
     setShow(id);
   };
-  console.log(show);
+  const [increMent, setIncrement] = useState(1);
+  const toggleIncrement = () => {
+    if (increMent) {
+      setIncrement(increMent + 1);
+    }
+  };
+  const toggleDecrement = () => {
+    if (increMent > 1) {
+      setIncrement(increMent - 1);
+    }
+  };
+
+  const addProduct = () => {
+    if (user && user?.email) {
+      const orderItem = {
+        name: finalItem?.name,
+        offerPrice: finalItem?.offerPrice,
+        image: finalItem?.image,
+        email: user?.email,
+        quantity: increMent,
+        price: increMent * finalItem?.offerPrice,
+      };
+      fetch(`http://localhost:5000/userFoods`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(orderItem),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.insertedId) {
+            refetch();
+            Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: "Food Add to cart Successfully",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        });
+    } else {
+      Swal.fire({
+        title: "Please Login before order to Food?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Login Now",
+      }).then(result => {
+        if (result.isConfirmed) {
+          navigate("/login", { state: { from: location } });
+        }
+      });
+    }
+  };
+
   return (
     <div>
       <CoverBanner heading={"Menu Details"} subHeading={"Menu Details"} />
@@ -25,46 +96,25 @@ function Details() {
           <div className="py-10">
             <div className="lg:flex items-start justify-between gap-5">
               <div className="lg:w-2/5 w-full">
-                <img src={Image} alt="" className="w-full h-[590px]" />
+                <img
+                  src={finalItem?.image}
+                  alt=""
+                  className="w-full h-[450px]"
+                />
               </div>
               <div className="lg:w-3/5 w-full">
                 <h4 className="text-[32px] font-semibold text-secondary pb-2">
-                  Maxican Pizza Test Better
+                  {finalItem?.name}
                 </h4>
-                <h6 className="text-[24px] font-bold">$320.00</h6>
-                <p className="text-[16px] font-light py-2">Ratings</p>
+                <h6 className="text-[24px] font-bold">
+                  ${" "}
+                  <del className="text-red-600">{finalItem?.regularPrice}</del>{" "}
+                  {finalItem?.offerPrice}
+                </h6>
+                <p className="text-[16px] font-light py-2">Ratings (26)</p>
                 <p className="text-[15px] font-extralight text-secondary pb-2 lg:w-3/4 w-full">
-                  Pizza is a savory dish of Italian origin consisting of a
-                  usually round, flattened base of leavened wheat-based dough
-                  topped with tomatoes, cheese, and often various other
-                  ingredients.
+                  {finalItem?.description}
                 </p>
-                <div className="py-3">
-                  <h4 className="text-[22px] font-medium">Select Size</h4>
-                  <form action="">
-                    <div className="flex items-center justify-between lg:w-2/5 w-full">
-                      <span>
-                        <input type="radio" name="item" value="350" />
-                        Large
-                      </span>
-                      <span>+ $350</span>
-                    </div>
-                    <div className="flex items-center justify-between lg:w-2/5 w-full">
-                      <span>
-                        <input type="radio" name="item" value="250" />
-                        Medium
-                      </span>
-                      <span>+ $250</span>
-                    </div>
-                    <div className="flex items-center justify-between lg:w-2/5 w-full">
-                      <span>
-                        <input type="radio" name="item" value="150" />
-                        Small
-                      </span>
-                      <span>+ $150</span>
-                    </div>
-                  </form>
-                </div>
                 <div className="pb-3">
                   <h4 className="text-[22px] font-medium">
                     Select Option (Optional)
@@ -102,22 +152,31 @@ function Details() {
                   </h4>
                   <div className="flex items-center gap-5">
                     <div className="flex items-center justify-start">
-                      <button className="w-[40px] h-[40px] flex items-center justify-center bg-primary text-white text-[24px]">
+                      <button
+                        onClick={toggleDecrement}
+                        className="w-[40px] h-[40px] flex items-center justify-center bg-primary text-white text-[24px]"
+                      >
                         -
                       </button>
                       <span className="border py-[7px] w-[80px] px-2">
-                        $ 230
+                        {increMent}
                       </span>
-                      <button className="w-[40px] h-[40px] flex items-center justify-center bg-primary text-white text-[24px]">
+                      <button
+                        onClick={toggleIncrement}
+                        className="w-[40px] h-[40px] flex items-center justify-center bg-primary text-white text-[24px]"
+                      >
                         +
                       </button>
                     </div>
                     <span className="text-[26px] font-bold text-secondary">
-                      Total: $520
+                      Total: $ {increMent * parseFloat(finalItem?.offerPrice)}
                     </span>
                   </div>
                 </div>
-                <button className="px-5 py-2 bg-primary text-white rounded-md">
+                <button
+                  onClick={addProduct}
+                  className="px-5 py-2 bg-primary text-white rounded-md"
+                >
                   Add To Cart
                 </button>
               </div>
@@ -271,7 +330,6 @@ function Details() {
                       </div>
                     </div>
                     <hr />
-                    
                   </div>
                   <div className="lg:w-2/5 w-full bg-bg-primary p-5 rounded-md">
                     <h4 className="text-[24px] font-bold text-secondary pb-3">
@@ -353,36 +411,11 @@ function Details() {
                 }}
                 modules={[Autoplay, Navigation]}
               >
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Card />
-                </SwiperSlide>
+                {categoryItem?.map((item, i) => (
+                  <SwiperSlide key={i}>
+                    <Card item={item} />
+                  </SwiperSlide>
+                ))}
               </Swiper>
             </div>
           </div>

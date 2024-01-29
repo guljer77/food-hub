@@ -7,8 +7,10 @@ import Man from "../../../assets/man.png";
 import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import { useAuth } from "../../../Hooks/useAuth";
+import { useCartData } from "../../../Hooks/useCart";
 
 function Header() {
+  const [cart] = useCartData();
   const [show, setShow] = useState(false);
   const { user, userSignOut } = useAuth();
   const logOut = () => {
@@ -97,8 +99,9 @@ function Header() {
             </div>
             <div className="flex items-center space-x-5">
               <div className="lg:block hidden">
-                <Link>
+                <Link to="/cart" className="flex items-center gap-[2px]">
                   <IoMdCart className="text-[24px]" />
+                  <span className="relative -top-5 text-primary">{cart?.length}</span>
                 </Link>
               </div>
               <div className="lg:block hidden">

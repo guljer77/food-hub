@@ -96,11 +96,14 @@ function DailyOffer() {
               disableOnInteraction: false,
             }}
             breakpoints={{
+              320: {
+                slidesPerView: 1,
+              },
               420: {
                 slidesPerView: 1,
               },
               640: {
-                slidesPerView: 2,
+                slidesPerView: 1,
                 spaceBetween: 20,
               },
               768: {

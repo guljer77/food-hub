@@ -57,16 +57,10 @@ function EditFood() {
             description,
             image: imgUrl,
           };
-          fetch(`http://localhost:5000/foods/admin/${_id}`, {
-            method: "PUT",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify(newItem),
-          })
-            .then(res => res.json())
+          axiosSecure.put(`/foods/admin/${_id}`, newItem)
             .then(data => {
-              if (data.modifiedCount) {
+              if (data.data.modifiedCount) {
+                refetch();
                 Swal.fire({
                   position: "top-end",
                   icon: "success",

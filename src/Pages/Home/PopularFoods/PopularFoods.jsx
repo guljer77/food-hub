@@ -1,7 +1,6 @@
 import React from "react";
 import SectionTitle from "../../../Components/SectionTitle";
 import Container from "../../../Components/Container";
-import Card from "../../../Components/Food/Card";
 
 function PopularFoods({handleClick, result}) {
   return (

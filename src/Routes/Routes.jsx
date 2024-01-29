@@ -19,6 +19,9 @@ import AdminRoute from "./AdminRoute";
 import AddFood from "../Dashboard/Food/AddFood/AddFood";
 import ManageFood from "../Dashboard/Food/ManageFood/ManageFood";
 import EditFood from "../Dashboard/Food/EditFood/EditFood";
+import Cart from "../Pages/CartPage/Cart";
+import PrivateRoute from "./PrivateRoute";
+import Payments from "../Pages/Payments/Payments";
 
 export const router = createBrowserRouter([
   {
@@ -51,8 +54,16 @@ export const router = createBrowserRouter([
         element: <Contact />
       },
       {
-        path: '/details',
+        path: '/details/:id',
         element: <Details />
+      },
+      {
+        path: '/cart',
+        element: <PrivateRoute><Cart /></PrivateRoute>
+      },
+      {
+        path: '/payments',
+        element: <PrivateRoute><Payments /></PrivateRoute>
       },
       {
         path:'/blogDetails',
@@ -60,7 +71,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <Profile />
+        element: <PrivateRoute><Profile /></PrivateRoute>
       }
     ]
   },
