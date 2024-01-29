@@ -7,18 +7,20 @@ import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import Card from "../../Components/Food/Card";
-import Review from "../../assets/client_1.png";
 import { useMenu } from "../../Hooks/useMenu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Hooks/useAuth";
 import Swal from "sweetalert2";
 import { useCartData } from "../../Hooks/useCart";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useForm } from "react-hook-form";
+import { useComments } from "../../Hooks/useComments";
+import Ratings from "./Ratings";
 
 function Details() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [,refetch] = useCartData();
+  const [, refetch] = useCartData();
   const { user } = useAuth();
   const [foods] = useMenu();
   const { id } = useParams();
@@ -27,10 +29,14 @@ function Details() {
   const categoryItem = foods.filter(
     item => item?.category === finalItem?.category
   );
+
+  //details-reviews-tabs
   const [show, setShow] = useState(1);
   const toggleClick = id => {
     setShow(id);
   };
+
+  //product-quantity
   const [increMent, setIncrement] = useState(1);
   const toggleIncrement = () => {
     if (increMent) {
@@ -43,6 +49,7 @@ function Details() {
     }
   };
 
+  //add-product
   const addProduct = () => {
     if (user && user?.email) {
       const orderItem = {
@@ -53,19 +60,18 @@ function Details() {
         quantity: increMent,
         price: increMent * finalItem?.offerPrice,
       };
-      axiosSecure.post(`/userFoods`,orderItem)
-        .then(data => {
-          if (data.data.insertedId) {
-            refetch();
-            Swal.fire({
-              position: "top-end",
-              icon: "success",
-              title: "Food Add to cart Successfully",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          }
-        });
+      axiosSecure.post(`/userFoods`, orderItem).then(data => {
+        if (data.data.insertedId) {
+          refetch();
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Food Add to cart Successfully",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      });
     } else {
       Swal.fire({
         title: "Please Login before order to Food?",
@@ -82,6 +88,56 @@ function Details() {
     }
   };
 
+  //comments
+  const [comments, reload] = useComments();
+  const {
+    register,
+    reset,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+  //comments
+  const onSubmit = data => {
+    const commentsItem = {
+      name: data.name,
+      ratings: data.select_ratings,
+      message: data.message,
+      image: user?.photoURL,
+      product_Id: id,
+      date: new Date().toLocaleDateString(),
+    };
+    if (user) {
+      axiosSecure.post(`/comments`, commentsItem).then(data => {
+        if (data.data.insertedId) {
+          reload();
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Comments Successfully",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        title: "Please Login before your Comment?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Login Now",
+      }).then(result => {
+        if (result.isConfirmed) {
+          navigate("/login", { state: { from: location } });
+        }
+      });
+    }
+    reset();
+  };
+  const productMatchComments = comments.filter(
+    items => items?.product_Id === id
+  );
   return (
     <div>
       <CoverBanner heading={"Menu Details"} subHeading={"Menu Details"} />
@@ -101,9 +157,11 @@ function Details() {
                 <h4 className="text-[32px] font-semibold text-secondary pb-2">
                   {finalItem?.name}
                 </h4>
+                <div>
+                  <Ratings />
+                </div>
                 <h6 className="text-[24px] font-bold">
-                  ${" "}
-                  <del className="text-red-600">{finalItem?.regularPrice}</del>{" "}
+                  $ <del className="text-red-600">{finalItem?.regularPrice}</del>
                   {finalItem?.offerPrice}
                 </h6>
                 <p className="text-[16px] font-light py-2">Ratings (26)</p>
@@ -245,108 +303,70 @@ function Details() {
                 <div className="lg:flex items-start justify-between gap-5">
                   <div className="lg:w-3/5 w-full bg-gray-200 rounded-md p-5">
                     <h4 className="text-[24px] font-bold text-secondary pb-3">
-                      04 Reviews
+                      {productMatchComments.length} Reviews
                     </h4>
-                    <div className="flex items-center justify-between gap-3 pb-5">
-                      <div className="w-1/6">
-                        <img
-                          src={Review}
-                          alt=""
-                          className="w-[90px] h-[90px] rounded-full bg-white p-1"
-                        />
+                    {productMatchComments.map(item => (
+                      <div key={item?._id}>
+                        <div className="flex items-start justify-between gap-3 pb-5">
+                          <div className="w-1/6">
+                            <img
+                              src={item?.image}
+                              alt=""
+                              className="w-[90px] h-[90px] rounded-full bg-white p-1"
+                            />
+                          </div>
+                          <div className="w-5/6">
+                            <h4 className="text-[18px] font-semibold text-secondary pb-2">
+                              {item?.name}
+                            </h4>
+                            <p className="text-secondary text-[17px] font-semibold">
+                              {item?.date}
+                            </p>
+                            <p className="text-[15px] font-extralight text-secondary flex items-center gap-3">
+                              <Ratings stars={parseFloat(item?.ratings)} />
+                            </p>
+                            <p className="text-[16px] font-light text-secondary">
+                              {item?.message}
+                            </p>
+                          </div>
+                        </div>
+                        <hr />
                       </div>
-                      <div className="w-5/6">
-                        <h4 className="text-[18px] font-semibold text-secondary pb-2">
-                          Salina Khan
-                        </h4>
-                        <p className="text-[15px] font-extralight text-secondary">
-                          29 Oct 2022
-                        </p>
-                        <p className="text-[15px] font-extralight text-secondary">
-                          Ratings
-                        </p>
-                        <p className="text-[16px] font-light text-secondary">
-                          Sure there is not anything embarrassing hiidden in the
-                          middles of text. All erators on the Internet tend to
-                          repeat predefined chunks
-                        </p>
-                      </div>
-                    </div>
-                    <hr />
-                    <div className="flex items-center justify-between gap-3 pb-5">
-                      <div className="w-1/6">
-                        <img
-                          src={Review}
-                          alt=""
-                          className="w-[90px] h-[90px] rounded-full bg-white p-1"
-                        />
-                      </div>
-                      <div className="w-5/6">
-                        <h4 className="text-[18px] font-semibold text-secondary pb-2">
-                          Salina Khan
-                        </h4>
-                        <p className="text-[15px] font-extralight text-secondary">
-                          29 Oct 2022
-                        </p>
-                        <p className="text-[15px] font-extralight text-secondary">
-                          Ratings
-                        </p>
-                        <p className="text-[16px] font-light text-secondary">
-                          Sure there is not anything embarrassing hiidden in the
-                          middles of text. All erators on the Internet tend to
-                          repeat predefined chunks
-                        </p>
-                      </div>
-                    </div>
-                    <hr />
-                    <div className="flex items-center justify-between gap-3 pb-5">
-                      <div className="w-1/6">
-                        <img
-                          src={Review}
-                          alt=""
-                          className="w-[90px] h-[90px] rounded-full bg-white p-1"
-                        />
-                      </div>
-                      <div className="w-5/6">
-                        <h4 className="text-[18px] font-semibold text-secondary pb-2">
-                          Salina Khan
-                        </h4>
-                        <p className="text-[15px] font-extralight text-secondary">
-                          29 Oct 2022
-                        </p>
-                        <p className="text-[15px] font-extralight text-secondary">
-                          Ratings
-                        </p>
-                        <p className="text-[16px] font-light text-secondary">
-                          Sure there is not anything embarrassing hiidden in the
-                          middles of text. All erators on the Internet tend to
-                          repeat predefined chunks
-                        </p>
-                      </div>
-                    </div>
-                    <hr />
+                    ))}
                   </div>
                   <div className="lg:w-2/5 w-full bg-bg-primary p-5 rounded-md">
                     <h4 className="text-[24px] font-bold text-secondary pb-3">
                       Write A Review
                     </h4>
-                    <form action="">
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <div>
+                        <select
+                          {...register("select_ratings", { required: true })}
+                          className="block w-full outline-0 p-2 rounded mb-3"
+                        >
+                          <option value="">Select Your Ratings</option>
+                          <option value="1">1</option>
+                          <option value="1.5">1.5</option>
+                          <option value="2">2</option>
+                          <option value="2.5">2.5</option>
+                          <option value="3">3</option>
+                          <option value="3.5">3.5</option>
+                          <option value="4">4</option>
+                          <option value="4.5">4.5</option>
+                          <option value="5">5</option>
+                        </select>
+                      </div>
                       <input
                         type="text"
                         placeholder="Name"
-                        className="block w-full outline-0 p-2 rounded mb-3"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email"
+                        {...register("name", { required: true })}
                         className="block w-full outline-0 p-2 rounded mb-3"
                       />
                       <textarea
-                        name=""
                         placeholder="Message"
-                        id=""
                         cols="30"
                         rows="5"
+                        {...register("message", { required: true })}
                         className="block w-full outline-0 p-2 rounded mb-4 resize-none"
                       ></textarea>
                       <input
